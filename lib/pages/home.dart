@@ -1,4 +1,4 @@
-import "package:fitness_app/model/Categoria.dart";
+import "package:fitness_app/model/categoria.dart";
 import "package:fitness_app/widgets/categoria_widget.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
@@ -10,6 +10,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const TextStyle sectionTitleStyle = TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+    );
+
     const Color scaffoldBgColor = Colors.white,
                 iconColor = Colors.grey,
                 inputColor = Colors.black;
@@ -18,14 +23,14 @@ class HomePage extends StatelessWidget {
     List<Categoria> categorias = [];
 
     {
-      List<String> categoriasStrings = ["Ensalada", "Biscochuelo", "Tortilla", "Licuado"];
+      List<String> categoriasStrings = ["Ensalada", "Bizcochuelo", "Tortilla", "Licuado"];
       for (var i = 0; i < categoriasStrings.length; i++) {
         String categoria = categoriasStrings[i];
         categorias.add(
           Categoria(
             nombre: categoria,
             iconPath: "assets/icon/category/${categoria.toLowerCase()}.svg",
-            themeColor: i%2==0? const Color.fromARGB(255, 183, 210, 255) : const Color.fromARGB(255, 255, 206, 206)
+            themeColor: i%2==0? const Color.fromARGB(255, 215, 221, 255) : const Color.fromARGB(255, 255, 231, 231)
           )
         );
       }
@@ -38,17 +43,57 @@ class HomePage extends StatelessWidget {
       body: Column(
         children: [
           getSearchField(iconColorFilter, iconColor, inputColor),
-          // Column(
-          //   children: [
-          //     Text("Categoría"),
-          //     Row(
-          //       children: [
-          //         for (Categoria categoria in categorias)
-          //           CategoriaWidget(categoria: categoria)
-          //       ],
-          //     )
-          //   ],
-          // )
+          SizedBox(height: 40,),
+          Container(
+            // decoration: BoxDecoration(
+            //   // color: iconColor,
+            //   borderRadius: BorderRadius.circular(10),
+            //   border: BoxBorder.all(
+            //     color: iconColor,
+            //     width: 0.3,
+            //   )
+            // ),
+            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  // padding: EdgeInsets.only(left: 20),
+                  alignment: Alignment.centerLeft,
+                  child: Text("Categoría", style: sectionTitleStyle),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  height: 130,
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    // color: iconColor,
+                    borderRadius: BorderRadius.circular(20),
+                    border: BoxBorder.all(
+                      color: iconColor,
+                      width: 0.3,
+                    )
+                  ),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categorias.length,
+                    itemBuilder: (context, index) =>Align(
+                      alignment: Alignment.center,
+                      child: CategoriaWidget(
+                        categoria: categorias[index],
+                        width: 95,
+                        // margin: EdgeInsets.symmetric(horizontal: 10),
+                        margin: EdgeInsets.only(right: 20),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )
         ],
       )
     );
