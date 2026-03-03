@@ -1,5 +1,7 @@
 import "package:fitness_app/models/categoria.dart";
+import "package:fitness_app/models/recomendacion.dart";
 import "package:fitness_app/widgets/categoria_widget.dart";
+import "package:fitness_app/widgets/recomendacion_widget.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_svg/svg.dart";
@@ -7,6 +9,8 @@ import "package:flutter_svg/svg.dart";
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  final String iconsPath = "assets/icons/";
+  final String foodIconsPath = "assets/icons/category/";
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +19,8 @@ class HomePage extends StatelessWidget {
       fontWeight: FontWeight.w600,
     );
 
-    const Color scaffoldBgColor = Colors.white,
-                iconColor = Colors.grey,
-                inputColor = Colors.black;
-    const ColorFilter iconColorFilter = ColorFilter.mode(iconColor, BlendMode.srcIn);
+    
+    
 
     List<Categoria> categorias = [];
 
@@ -29,69 +31,130 @@ class HomePage extends StatelessWidget {
         categorias.add(
           Categoria(
             nombre: categoria,
-            iconPath: "assets/icons/category/${categoria.toLowerCase()}.svg",
-            themeColor: i%2==0? const Color.fromARGB(255, 215, 221, 255) : const Color.fromARGB(255, 255, 231, 231)
+            iconPath: "$foodIconsPath${categoria.toLowerCase()}.svg",
+            themeColor: i%2==0? Colores.color1 : Colores.color2
           )
         );
       }
     }
 
+    
+    List<Recomendacion> recomendaciones = [
+      Recomendacion(
+        iconPath: "${foodIconsPath}honey-pancakes.svg",
+        nombre: "Panqueques de miel",
+        descripcion: "Facil | 20 mins | 180 kcal",
+        themeColor: Colores.color1,
+        strongThemeColor: Colores.strongColor1,
+      ),
+      Recomendacion(
+        iconPath: "${foodIconsPath}blueberry-pancake.svg",
+        nombre: "Panqueques de arándanos",
+        descripcion: "Facil | 20 mins | 220 kcal",
+        themeColor: Colores.color2,
+        strongThemeColor: Colores.strongColor2,
+      ),
+      
+    ];
     return Scaffold(
-      backgroundColor: scaffoldBgColor,
-      appBar: MyBar(backgroundColor: scaffoldBgColor),
+      backgroundColor: Colores.scaffoldBgColor,
+      appBar: getBar(),
       // extendBodyBehindAppBar: false,
       body: Column(
         children: [
-          getSearchField(iconColorFilter, iconColor, inputColor),
-          SizedBox(height: 40,),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  // padding: EdgeInsets.only(left: 20),
-                  alignment: Alignment.centerLeft,
-                  child: Text("Categoría", style: sectionTitleStyle),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Container(
-                  height: 130,
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: iconColor.withAlpha(20),
-                    borderRadius: BorderRadius.circular(20),
-                    // border: BoxBorder.all(
-                    //   color: iconColor,
-                    //   width: 0.3,
-                    // )
-                  ),
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: categorias.length,
-                    separatorBuilder: (context, index) => SizedBox(
-                      width: 20,
-                    ),
-                    itemBuilder: (context, index) =>Align(
-                      alignment: Alignment.center,
-                      child: CategoriaWidget(
-                        categoria: categorias[index],
-                        width: 95,
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          )
+          getSearchField(),
+          const SizedBox(height: 50,),
+          getSeccionCategoria(sectionTitleStyle, categorias,),
+          const SizedBox(height: 50,),
+          getSeccionRecomendaciones(sectionTitleStyle, recomendaciones),
         ],
       )
     );
   }
 
-  Container getSearchField(ColorFilter iconColorFilter, Color iconColor, Color inputColor) {
+  Container getSeccionRecomendaciones(TextStyle sectionTitleStyle, List<Recomendacion> recomendaciones) {
+    return Container(
+          // height: 150,
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                child: Text("Recomendaciones para dieta", style: sectionTitleStyle,)
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Container(
+                height: 280,
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colores.iconColor.withAlpha(20),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  // separatorBuilder: (context, index) => SizedBox(width: 20,),
+                  separatorBuilder: (context, index) => SizedBox( width: 15, ),
+                  itemCount: recomendaciones.length,
+                  itemBuilder: (context, index) => Align(
+                    alignment: Alignment.center,
+                    child: RecomendacionWidget(recomendacion: recomendaciones[index], width: 200,),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+  }
+
+  Container getSeccionCategoria(TextStyle sectionTitleStyle, List<Categoria> categorias) {
+    return Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                // padding: EdgeInsets.only(left: 20),
+                alignment: Alignment.centerLeft,
+                child: Text("Categoría", style: sectionTitleStyle),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Container(
+                height: 130,
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colores.iconColor.withAlpha(20),
+                  borderRadius: BorderRadius.circular(20),
+                  // border: BoxBorder.all(
+                  //   color: iconColor,
+                  //   width: 0.3,
+                  // )
+                ),
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: categorias.length,
+                  separatorBuilder: (context, index) => SizedBox(
+                    width: 20,
+                  ),
+                  itemBuilder: (context, index) =>Align(
+                    alignment: Alignment.center,
+                    child: CategoriaWidget(
+                      categoria: categorias[index],
+                      width: 95,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+  }
+
+  Container getSearchField() {
+    const ColorFilter iconColorFilter = ColorFilter.mode(Colores.iconColor, BlendMode.srcIn);
     return Container(
           margin: EdgeInsets.only(top: 40, left: 20, right: 20),
           decoration: BoxDecoration(
@@ -115,7 +178,7 @@ class HomePage extends StatelessWidget {
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: SvgPicture.asset(
-                  "assets/icons/Search.svg",
+                  "${iconsPath}Search.svg",
                   colorFilter: iconColorFilter,
                 ),
               ),
@@ -128,7 +191,7 @@ class HomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     VerticalDivider(
-                      color: iconColor,
+                      color: Colores.iconColor,
                       thickness: 0.3,
                       indent: 10,
                       endIndent: 10,
@@ -137,7 +200,7 @@ class HomePage extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: SvgPicture.asset("assets/icons/Filter.svg", colorFilter: iconColorFilter, width: 32,),
+                      child: SvgPicture.asset("${iconsPath}Filter.svg", colorFilter: iconColorFilter, width: 32,),
                     ),
                   ],
                 ),
@@ -145,36 +208,23 @@ class HomePage extends StatelessWidget {
               
               hintText: "Buscar comida",
               hintStyle: TextStyle(
-                color: iconColor,
+                color: Colores.iconColor,
                 fontSize: 14
               )
               
             ),
             style: TextStyle(
-              color: inputColor,
+              color: Colores.inputColor,
             ),
 
             
           )
         );
   }
-}
-
-class MyBar extends StatelessWidget implements PreferredSizeWidget{
-  final Color backgroundColor;
   
-  const MyBar({
-    super.key,
-    required this.backgroundColor,
-  });
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-
-  @override
-  Widget build(BuildContext context) {
+  AppBar getBar(){
     return AppBar(
-      backgroundColor: backgroundColor,
+      backgroundColor: Colores.scaffoldBgColor,
       
       title:Text("Desayuno",
         style: TextStyle(
@@ -189,19 +239,17 @@ class MyBar extends StatelessWidget implements PreferredSizeWidget{
       leading: GestureDetector(
         onTap: (){
         },
-        child: MySvgButton("assets/icons/Arrow - Left 2.svg", 20, 20),
+        child: MySvgButton("${iconsPath}Arrow - Left 2.svg", 20, 20),
       ),
     
       actions: [
         GestureDetector(
           onTap: (){
           },
-          child: MySvgButton("assets/icons/dots.svg", 5, 5),
+          child: MySvgButton("${iconsPath}dots.svg", 5, 5),
         ),
       ],
 
-      
-    
     );
   }
 }
@@ -228,4 +276,14 @@ class MySvgButton extends StatelessWidget {
       ),          
     );
   }
+}
+
+class Colores {
+  static const Color  color1 = Color.fromARGB(255, 255, 239, 239),
+                      strongColor1 = Color.fromARGB(255, 255, 209, 209),
+                      color2 = Color.fromARGB(255, 242, 248, 255),
+                      strongColor2 = Color.fromARGB(255, 203, 227, 255),
+                      scaffoldBgColor = Colors.white,
+                      iconColor = Colors.grey,
+                      inputColor = Colors.black;
 }
