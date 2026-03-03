@@ -1,4 +1,4 @@
-import 'package:fitness_app/model/categoria.dart';
+import 'package:fitness_app/models/categoria.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
