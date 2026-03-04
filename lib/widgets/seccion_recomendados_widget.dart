@@ -1,14 +1,15 @@
 import 'package:fitness_app/models/recomendacion.dart';
 import 'package:fitness_app/widgets/recomendacion_widget.dart';
-import 'package:fitness_app/pages/home.dart';
+import 'package:fitness_app/pages/meal_page.dart';
 import 'package:flutter/material.dart';
 
 class SeccionRecomendadosWidget extends StatelessWidget {
   SeccionRecomendadosWidget({super.key, this.recomendaciones = const [], required this.recomendacionSeleccionada, required this.setRecomendacionSeleccionada});
 
   final List<Recomendacion> recomendaciones;
-  Recomendacion? recomendacionSeleccionada;
-  Function(Recomendacion) setRecomendacionSeleccionada;
+  final Recomendacion? recomendacionSeleccionada;
+  final void Function(Recomendacion) setRecomendacionSeleccionada;
+  final ScrollController _controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class SeccionRecomendadosWidget extends StatelessWidget {
       ),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        // separatorBuilder: (context, index) => SizedBox(width: 20,),
+        controller: _controller,
         separatorBuilder: (context, index) => SizedBox( width: 15, ),
         itemCount: recomendaciones.length,
         itemBuilder: (context, index) => Align(

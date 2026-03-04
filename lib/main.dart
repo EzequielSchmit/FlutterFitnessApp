@@ -1,4 +1,6 @@
-import 'package:fitness_app/pages/home.dart';
+import 'package:fitness_app/models/comidas.dart';
+import 'package:fitness_app/pages/home_page.dart';
+import 'package:fitness_app/pages/meal_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: "Poppins"),
-      home: HomePage(),
+      home: HomePage(), // MealPage(comida: Comidas.merienda,),
     );
   }
 }

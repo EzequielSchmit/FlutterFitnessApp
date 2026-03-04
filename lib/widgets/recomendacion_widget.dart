@@ -1,5 +1,5 @@
 import 'package:fitness_app/models/recomendacion.dart';
-import 'package:fitness_app/pages/home.dart';
+import 'package:fitness_app/pages/meal_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -21,6 +21,11 @@ class RecomendacionWidget extends StatelessWidget{
     return GestureDetector(
       onTap: (){
         setRecomendacionSeleccionado(recomendacion);
+        Scrollable.ensureVisible(
+          context,
+          alignment: 0,
+          duration: Duration(milliseconds: 300)
+        );
       },
       child: Stack(
         children: [
@@ -35,6 +40,7 @@ class RecomendacionWidget extends StatelessWidget{
             ),*/
             decoration: BoxDecoration(
               color: recomendacion.themeColor,
+              borderRadius: BorderRadius.circular(15),
             ),
             padding: EdgeInsets.symmetric(vertical: 15),
             child: Column(
@@ -92,10 +98,12 @@ class RecomendacionWidget extends StatelessWidget{
             ),
           ),
           Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                border: isSelected? Border.all(color: const Color(0xff9DCEFF), strokeAlign: BorderSide.strokeAlignInside, width: 4) : null,
+            child: IgnorePointer(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  border: isSelected? Border.all(color: const Color(0xff9DCEFF), strokeAlign: BorderSide.strokeAlignInside, width: 4) : null,
+                ),
               ),
             )
           )

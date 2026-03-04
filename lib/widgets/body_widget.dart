@@ -1,14 +1,15 @@
 import 'package:fitness_app/models/categoria.dart';
+import 'package:fitness_app/models/comidas.dart';
 import 'package:fitness_app/models/recomendacion.dart';
 import 'package:fitness_app/widgets/categoria_widget.dart';
 import 'package:fitness_app/widgets/seccion_recomendados_widget.dart';
 import 'package:flutter/material.dart';
-import "package:fitness_app/pages/home.dart";
+import "package:fitness_app/pages/meal_page.dart";
 import 'package:flutter_svg/svg.dart';
 
 class BodyWidget extends StatefulWidget {
-  const BodyWidget({super.key});
-
+  const BodyWidget({super.key, required this.comida});
+  final Comidas comida;
 
   @override
   State<BodyWidget> createState() => _BodyWidgetState();
@@ -22,7 +23,34 @@ class _BodyWidgetState extends State<BodyWidget> {
   @override
   void initState(){
     super.initState();
-    List<String> categoriasStrings = ["Ensalada", "Torta", "Panqueque", "Batido"];
+    List<String> categoriasStrings = [];
+    switch (widget.comida) {
+      case Comidas.desayuno:
+        //idealmente se llamaria a una API, o se buscaría la informacion en una base de datos
+        categoriasStrings.addAll(["Ensalada", "Torta", "Panqueque", "Batido"]);
+        recomendaciones.addAll(
+          [
+            Recomendacion(
+              iconPath: "${Paths.foodIconsPath}honey-pancakes.svg",
+              nombre: "Panqueques de miel",
+              descripcion: "Facil | 20 mins | 180 kcal",
+              themeColor: Colores.color1,
+              strongThemeColor: Colores.strongColor1,
+            ),
+            Recomendacion(
+              iconPath: "${Paths.foodIconsPath}blueberry-pancake.svg",
+              nombre: "Panqueques de arándanos",
+              descripcion: "Facil | 20 mins | 220 kcal",
+              themeColor: Colores.color2,
+              strongThemeColor: Colores.strongColor2,
+            ),
+          ]
+        );
+
+        break;
+      default:
+    }
+
     for (var i = 0; i < categoriasStrings.length; i++) {
       String categoria = categoriasStrings[i];
       categorias.add(
@@ -35,24 +63,6 @@ class _BodyWidgetState extends State<BodyWidget> {
     }
 
     
-    recomendaciones.addAll(
-      [
-        Recomendacion(
-          iconPath: "${Paths.foodIconsPath}honey-pancakes.svg",
-          nombre: "Panqueques de miel",
-          descripcion: "Facil | 20 mins | 180 kcal",
-          themeColor: Colores.color1,
-          strongThemeColor: Colores.strongColor1,
-        ),
-        Recomendacion(
-          iconPath: "${Paths.foodIconsPath}blueberry-pancake.svg",
-          nombre: "Panqueques de arándanos",
-          descripcion: "Facil | 20 mins | 220 kcal",
-          themeColor: Colores.color2,
-          strongThemeColor: Colores.strongColor2,
-        ),
-      ]
-    );
     
   }
 
