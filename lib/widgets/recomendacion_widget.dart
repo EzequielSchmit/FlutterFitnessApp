@@ -5,10 +5,12 @@ import 'package:flutter_svg/svg.dart';
 
 class RecomendacionWidget extends StatelessWidget{
 
-  const RecomendacionWidget({super.key, required this.recomendacion, this.width = 0, this.height = 0});
+  const RecomendacionWidget({super.key, required this.recomendacion, this.isSelected = false, this.width = 0, this.height = 0, required this.setRecomendacionSeleccionado});
 
   final double width, height;
   final Recomendacion recomendacion;
+  final bool isSelected;
+  final Function(Recomendacion) setRecomendacionSeleccionado;
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +21,10 @@ class RecomendacionWidget extends StatelessWidget{
     return GestureDetector(
       onTap: (){
         print("Seleccionar recomendacion: ${recomendacion.nombre}");
-        if (!recomendacion.isSelected){
+        if (!isSelected){
           //deseleccionar otras
           //seleccionar
+          setRecomendacionSeleccionado(recomendacion);
         }
       },
       child: Container(
@@ -30,11 +33,12 @@ class RecomendacionWidget extends StatelessWidget{
         decoration: BoxDecoration(
           color: recomendacion.themeColor,
           borderRadius: BorderRadius.circular(15),
-          border: recomendacion.isSelected? Border.all(color: const Color(0xff9DCEFF), strokeAlign: BorderSide.strokeAlignInside, width: 4) : null,
+          border: isSelected? Border.all(color: const Color(0xff9DCEFF), strokeAlign: BorderSide.strokeAlignInside, width: 4) : null,
         ),
         padding: EdgeInsets.symmetric(vertical: 15),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
               // margin: EdgeInsets.only(top: 10),
@@ -46,6 +50,7 @@ class RecomendacionWidget extends StatelessWidget{
             ),
             Text(
               recomendacion.nombre,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 color: _isDarkColor(themeColor) ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w600,
@@ -65,7 +70,7 @@ class RecomendacionWidget extends StatelessWidget{
                 height: 45,
                 width: 130,
                 decoration: BoxDecoration(
-                  gradient: recomendacion.isSelected ?
+                  gradient: isSelected ?
                     LinearGradient(
                       colors: [
                         const Color(0xff9DCEFF),
@@ -77,7 +82,7 @@ class RecomendacionWidget extends StatelessWidget{
                 alignment: Alignment.center,
                 child: Text("View",
                   style: TextStyle(
-                    color: recomendacion.isSelected ? Colors.white : Color.alphaBlend(themeColor.withAlpha(130), Colors.black),
+                    color: isSelected ? Colors.white : Color.alphaBlend(themeColor.withAlpha(130), Colors.black),
                   )
                 ),
               ),

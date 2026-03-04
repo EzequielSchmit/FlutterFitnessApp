@@ -2,8 +2,8 @@ import "package:fitness_app/models/categoria.dart";
 import "package:fitness_app/models/recomendacion.dart";
 import "package:fitness_app/widgets/categoria_widget.dart";
 import "package:fitness_app/widgets/recomendacion_widget.dart";
+import "package:fitness_app/widgets/seccion_recomendados_widget.dart";
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:flutter_svg/svg.dart";
 
 class HomePage extends StatelessWidget {
@@ -46,7 +46,6 @@ class HomePage extends StatelessWidget {
         descripcion: "Facil | 20 mins | 180 kcal",
         themeColor: Colores.color1,
         strongThemeColor: Colores.strongColor1,
-        isSelected: true,
       ),
       Recomendacion(
         iconPath: "${foodIconsPath}blueberry-pancake.svg",
@@ -86,24 +85,25 @@ class HomePage extends StatelessWidget {
               const SizedBox(
                 height: 15,
               ),
-              Container(
-                height: 280,
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colores.iconColor.withAlpha(20),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  // separatorBuilder: (context, index) => SizedBox(width: 20,),
-                  separatorBuilder: (context, index) => SizedBox( width: 15, ),
-                  itemCount: recomendaciones.length,
-                  itemBuilder: (context, index) => Align(
-                    alignment: Alignment.center,
-                    child: RecomendacionWidget(recomendacion: recomendaciones[index], width: 200,),
-                  ),
-                ),
-              )
+              SeccionRecomendadosWidget(recomendaciones: recomendaciones,),
+              // Container(
+              //   height: 280,
+              //   padding: EdgeInsets.all(10),
+              //   decoration: BoxDecoration(
+              //     color: Colores.iconColor.withAlpha(20),
+              //     borderRadius: BorderRadius.circular(20),
+              //   ),
+              //   child: ListView.separated(
+              //     scrollDirection: Axis.horizontal,
+              //     // separatorBuilder: (context, index) => SizedBox(width: 20,),
+              //     separatorBuilder: (context, index) => SizedBox( width: 15, ),
+              //     itemCount: recomendaciones.length,
+              //     itemBuilder: (context, index) => Align(
+              //       alignment: Alignment.center,
+              //       child: RecomendacionWidget(recomendacion: recomendaciones[index], width: 200,),
+              //     ),
+              //   ),
+              // )
             ],
           ),
         );
