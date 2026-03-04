@@ -3,24 +3,12 @@ import 'package:fitness_app/widgets/recomendacion_widget.dart';
 import 'package:fitness_app/pages/home.dart';
 import 'package:flutter/material.dart';
 
-class SeccionRecomendadosWidget extends StatefulWidget {
-  const SeccionRecomendadosWidget({super.key, this.recomendaciones = const []});
+class SeccionRecomendadosWidget extends StatelessWidget {
+  SeccionRecomendadosWidget({super.key, this.recomendaciones = const [], required this.recomendacionSeleccionada, required this.setRecomendacionSeleccionada});
 
   final List<Recomendacion> recomendaciones;
-
-  @override
-  State<SeccionRecomendadosWidget> createState() => _SeccionRecomendadosWidgetState();
-}
-
-class _SeccionRecomendadosWidgetState extends State<SeccionRecomendadosWidget> {
-
-  late Recomendacion recomendacionSeleccionada;
-
-  void setRecomendacionSeleccionado(Recomendacion recomendacion){
-    setState(() {
-      recomendacionSeleccionada = recomendacion;
-    });
-  }
+  Recomendacion? recomendacionSeleccionada;
+  Function(Recomendacion) setRecomendacionSeleccionada;
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +23,10 @@ class _SeccionRecomendadosWidgetState extends State<SeccionRecomendadosWidget> {
         scrollDirection: Axis.horizontal,
         // separatorBuilder: (context, index) => SizedBox(width: 20,),
         separatorBuilder: (context, index) => SizedBox( width: 15, ),
-        itemCount: widget.recomendaciones.length,
+        itemCount: recomendaciones.length,
         itemBuilder: (context, index) => Align(
           alignment: Alignment.center,
-          child: RecomendacionWidget(recomendacion: widget.recomendaciones[index], width: 220, isSelected: (recomendacionSeleccionada == widget.recomendaciones[index]), setRecomendacionSeleccionado: setRecomendacionSeleccionado,),
+          child: RecomendacionWidget(recomendacion: recomendaciones[index], width: 220, isSelected: (recomendacionSeleccionada == recomendaciones[index]), setRecomendacionSeleccionado: setRecomendacionSeleccionada,),
         ),
       ),
     );

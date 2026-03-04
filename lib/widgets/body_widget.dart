@@ -1,43 +1,94 @@
-import "package:fitness_app/models/categoria.dart";
-import "package:fitness_app/models/recomendacion.dart";
-import "package:fitness_app/widgets/body_widget.dart";
-import "package:fitness_app/widgets/categoria_widget.dart";
-import "package:fitness_app/widgets/recomendacion_widget.dart";
-import "package:fitness_app/widgets/seccion_recomendados_widget.dart";
-import "package:flutter/material.dart";
-import "package:flutter_svg/svg.dart";
+import 'package:fitness_app/models/categoria.dart';
+import 'package:fitness_app/models/recomendacion.dart';
+import 'package:fitness_app/widgets/categoria_widget.dart';
+import 'package:fitness_app/widgets/seccion_recomendados_widget.dart';
+import 'package:flutter/material.dart';
+import "package:fitness_app/pages/home.dart";
+import 'package:flutter_svg/svg.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class BodyWidget extends StatefulWidget {
+  const BodyWidget({super.key});
 
-  final String iconsPath = "assets/icons/";
-  final String foodIconsPath = "assets/icons/category/";
+
+  @override
+  State<BodyWidget> createState() => _BodyWidgetState();
+}
+
+class _BodyWidgetState extends State<BodyWidget> {
+  List<Recomendacion> recomendaciones = [];
+  List<Categoria> categorias = [];
+  Recomendacion? recomendacionSeleccionada;
+
+  @override
+  void initState(){
+    super.initState();
+    List<String> categoriasStrings = ["Ensalada", "Torta", "Panqueque", "Batido"];
+    for (var i = 0; i < categoriasStrings.length; i++) {
+      String categoria = categoriasStrings[i];
+      categorias.add(
+        Categoria(
+          nombre: categoria,
+          iconPath: "${Paths.foodIconsPath}${categoria.toLowerCase()}.svg",
+          themeColor: i%2==0? Colores.color1 : Colores.color2
+        )
+      );
+    }
+
+    
+    recomendaciones.addAll(
+      [
+        Recomendacion(
+          iconPath: "${Paths.foodIconsPath}honey-pancakes.svg",
+          nombre: "Panqueques de miel",
+          descripcion: "Facil | 20 mins | 180 kcal",
+          themeColor: Colores.color1,
+          strongThemeColor: Colores.strongColor1,
+        ),
+        Recomendacion(
+          iconPath: "${Paths.foodIconsPath}blueberry-pancake.svg",
+          nombre: "Panqueques de arándanos",
+          descripcion: "Facil | 20 mins | 220 kcal",
+          themeColor: Colores.color2,
+          strongThemeColor: Colores.strongColor2,
+        ),
+      ]
+    );
+    
+  }
+
+  void setRecomendacionSeleccionada(Recomendacion? recomendacionASeleccionar){
+    setState(() {
+      recomendacionSeleccionada = recomendacionASeleccionar;
+      print("Seleccionar recomendacion: ${recomendacionSeleccionada?.nombre}");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    
-    
-    return Scaffold(
-      backgroundColor: Colores.scaffoldBgColor,
-      appBar: getBar(),
-      // extendBodyBehindAppBar: false,
-      body: BodyWidget(),
-      /*
-      body: ListView(
+    return GestureDetector(
+      onTap: (){
+        setRecomendacionSeleccionada(null);
+      },
+      child: ListView(
         children: [
           getSearchField(),
           const SizedBox(height: 50,),
-          getSeccionCategoria(sectionTitleStyle, categorias,),
+          getSeccionCategoria(categorias,),
           const SizedBox(height: 50,),
-          getSeccionRecomendaciones(sectionTitleStyle, recomendaciones),
+          getSeccionRecomendaciones(recomendaciones),
         ],
-      )*/
+      ),
     );
   }
 
-/*
-  Container getSeccionRecomendaciones(TextStyle sectionTitleStyle, List<Recomendacion> recomendaciones) {
+
+
+
+
+
+
+
+  Container getSeccionRecomendaciones(List<Recomendacion> recomendaciones) {
     return Container(
           // height: 150,
           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -45,12 +96,12 @@ class HomePage extends StatelessWidget {
             children: [
               Container(
                 alignment: Alignment.centerLeft,
-                child: Text("Recomendaciones \npara dieta", style: sectionTitleStyle,)
+                child: Text("Recomendaciones \npara dieta", style: Estilos.sectionTitleStyle,)
               ),
               const SizedBox(
                 height: 15,
               ),
-              SeccionRecomendadosWidget(recomendaciones: recomendaciones,),
+              SeccionRecomendadosWidget(recomendaciones: recomendaciones, recomendacionSeleccionada: recomendacionSeleccionada, setRecomendacionSeleccionada: setRecomendacionSeleccionada,),
               // Container(
               //   height: 280,
               //   padding: EdgeInsets.all(10),
@@ -74,7 +125,7 @@ class HomePage extends StatelessWidget {
         );
   }
 
-  Container getSeccionCategoria(TextStyle sectionTitleStyle, List<Categoria> categorias) {
+  Container getSeccionCategoria(List<Categoria> categorias) {
     return Container(
           margin: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -83,7 +134,7 @@ class HomePage extends StatelessWidget {
                 width: double.infinity,
                 // padding: EdgeInsets.only(left: 20),
                 alignment: Alignment.centerLeft,
-                child: Text("Categoría", style: sectionTitleStyle),
+                child: Text("Categoría", style: Estilos.sectionTitleStyle),
               ),
               const SizedBox(
                 height: 15,
@@ -144,7 +195,7 @@ class HomePage extends StatelessWidget {
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: SvgPicture.asset(
-                  "${iconsPath}Search.svg",
+                  "${Paths.iconsPath}Search.svg",
                   colorFilter: iconColorFilter,
                 ),
               ),
@@ -166,101 +217,21 @@ class HomePage extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: SvgPicture.asset("${iconsPath}Filter.svg", colorFilter: iconColorFilter, width: 32,),
+                      child: SvgPicture.asset("${Paths.iconsPath}Filter.svg", colorFilter: iconColorFilter, width: 32,),
                     ),
                   ],
                 ),
               ),
               
               hintText: "Buscar comida",
-              hintStyle: TextStyle(
-                color: Colores.iconColor,
-                fontSize: 14
-              )
+              hintStyle: Estilos.hintSearchInput,
               
             ),
-            style: TextStyle(
-              color: Colores.inputColor,
-            ),
+            style: Estilos.searchInput,
 
             
           )
         );
   }
-  */
-  AppBar getBar(){
-    return AppBar(
-      backgroundColor: Colores.scaffoldBgColor,
-      // shadowColor: Colors.amber,
-      surfaceTintColor: Colores.scaffoldBgColor,
-      animateColor: true,
-
-      title:Text("Desayuno",
-        style: Estilos.titleStyle,
-        textAlign: TextAlign.center,
-      ),
-      centerTitle: true,
     
-      leading: GestureDetector(
-        onTap: (){
-        },
-        child: MySvgButton("${iconsPath}Arrow - Left 2.svg", 20, 20),
-      ),
-    
-      actions: [
-        GestureDetector(
-          onTap: (){
-          },
-          child: MySvgButton("${iconsPath}dots.svg", 5, 5),
-        ),
-      ],
-
-    );
-  }
-}
-
-class MySvgButton extends StatelessWidget {
-  String path;
-  double width, height;
-  MySvgButton(this.path, this.width, this.height, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 37,
-      margin: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Color(0xffF7F8F8),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      alignment: Alignment.center,
-      child: SvgPicture.asset(
-        path,
-        height: height,
-        width: width,
-      ),          
-    );
-  }
-}
-
-class Colores {
-  static const Color  color1 = Color.fromARGB(255, 255, 239, 239),
-                      strongColor1 = Color.fromARGB(255, 255, 209, 209),
-                      color2 = Color.fromARGB(255, 242, 248, 255),
-                      strongColor2 = Color.fromARGB(255, 203, 227, 255),
-                      scaffoldBgColor = Colors.white,
-                      iconColor = Colors.grey,
-                      inputColor = Colors.black;
-}
-
-class Estilos {
-  static const TextStyle  sectionTitleStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.w600,),
-                          titleStyle = TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold,),
-                          hintSearchInput = TextStyle(color: Colores.iconColor, fontSize: 14),
-                          searchInput = TextStyle(color: Colores.inputColor,);
-}
-
-class Paths {
-  static const String iconsPath = "assets/icons/",
-                      foodIconsPath = "assets/icons/category/";
 }
