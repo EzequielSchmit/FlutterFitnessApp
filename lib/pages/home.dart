@@ -46,6 +46,7 @@ class HomePage extends StatelessWidget {
         descripcion: "Facil | 20 mins | 180 kcal",
         themeColor: Colores.color1,
         strongThemeColor: Colores.strongColor1,
+        isSelected: true,
       ),
       Recomendacion(
         iconPath: "${foodIconsPath}blueberry-pancake.svg",
@@ -60,7 +61,7 @@ class HomePage extends StatelessWidget {
       backgroundColor: Colores.scaffoldBgColor,
       appBar: getBar(),
       // extendBodyBehindAppBar: false,
-      body: Column(
+      body: ListView(
         children: [
           getSearchField(),
           const SizedBox(height: 50,),
@@ -80,7 +81,7 @@ class HomePage extends StatelessWidget {
             children: [
               Container(
                 alignment: Alignment.centerLeft,
-                child: Text("Recomendaciones para dieta", style: sectionTitleStyle,)
+                child: Text("Recomendaciones \npara dieta", style: sectionTitleStyle,)
               ),
               const SizedBox(
                 height: 15,
@@ -225,7 +226,10 @@ class HomePage extends StatelessWidget {
   AppBar getBar(){
     return AppBar(
       backgroundColor: Colores.scaffoldBgColor,
-      
+      // shadowColor: Colors.amber,
+      surfaceTintColor: Colores.scaffoldBgColor,
+      animateColor: true,
+
       title:Text("Desayuno",
         style: TextStyle(
           color: Colors.black,
