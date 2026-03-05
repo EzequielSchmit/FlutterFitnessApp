@@ -19,22 +19,32 @@ class HomePage extends StatelessWidget {
           color: Colors.blue[50],
         ),
         width: double.infinity,
-        child: Column(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
 
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text("¿Qué querés comer?",
-              style: Estilos.sectionTitleStyle.copyWith(
-                fontSize: 22,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("¿Qué querés comer?",
+                      style: Estilos.sectionTitleStyle.copyWith(
+                        fontSize: 22,
+                      ),
+                    ),
+                    SizedBox(height: 50,),
+                    _getBotonDeComida(context, comida: CategoriasComida.desayuno),
+                    _getBotonDeComida(context, comida: CategoriasComida.comidaPrincipal),
+                    _getBotonDeComida(context, comida: CategoriasComida.snack),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 50,),
-            _getBotonDeComida(context, comida: CategoriasComida.desayuno),
-            _getBotonDeComida(context, comida: CategoriasComida.comidaPrincipal),
-            _getBotonDeComida(context, comida: CategoriasComida.snack),
-            
-          ],
+            );
+          }
         ),
       ),
     );
