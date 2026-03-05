@@ -1,4 +1,4 @@
-import 'package:fitness_app/models/comidas.dart';
+import 'package:fitness_app/util/utilities.dart';
 import 'package:fitness_app/pages/meal_page.dart';
 import 'package:flutter/material.dart';
 
@@ -30,10 +30,9 @@ class HomePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 50,),
-            _getBotonDeComida(context, comida: Comidas.desayuno, estaHabilitado: true),
-            _getBotonDeComida(context, comida: Comidas.comidaPrincipal),
-            _getBotonDeComida(context, comida: Comidas.merienda),
-            
+            _getBotonDeComida(context, comida: CategoriasComida.desayuno),
+            _getBotonDeComida(context, comida: CategoriasComida.comidaPrincipal),
+            _getBotonDeComida(context, comida: CategoriasComida.snack),
             
           ],
         ),
@@ -41,14 +40,14 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void abrirPaginaDeComida(BuildContext context, Comidas comida){
+  void abrirPaginaDeComida(BuildContext context, CategoriasComida comida){
     Navigator.push(
       context, 
       MaterialPageRoute(builder: (context) => MealPage(comida: comida),),
     );
   }
 
-  TextButton _getBotonDeComida(BuildContext context, {required Comidas comida, bool estaHabilitado = false}){
+  TextButton _getBotonDeComida(BuildContext context, {required CategoriasComida comida, bool estaHabilitado = true}){
     return TextButton(
       onPressed: estaHabilitado? ()=>abrirPaginaDeComida(context, comida) : null,
       child: Container(

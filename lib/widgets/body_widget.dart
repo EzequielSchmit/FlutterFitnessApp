@@ -1,6 +1,6 @@
 import 'package:fitness_app/models/categoria.dart';
-import 'package:fitness_app/models/comidas.dart';
-import 'package:fitness_app/models/recomendacion.dart';
+import 'package:fitness_app/util/utilities.dart';
+import 'package:fitness_app/models/comida.dart';
 import 'package:fitness_app/widgets/categoria_widget.dart';
 import 'package:fitness_app/widgets/seccion_recomendados_widget.dart';
 import 'package:flutter/material.dart';
@@ -8,48 +8,25 @@ import "package:fitness_app/pages/meal_page.dart";
 import 'package:flutter_svg/svg.dart';
 
 class BodyWidget extends StatefulWidget {
-  const BodyWidget({super.key, required this.comida});
-  final Comidas comida;
+  const BodyWidget({super.key, required this.categoriaSeleccionada});
+  final CategoriasComida categoriaSeleccionada;
 
   @override
   State<BodyWidget> createState() => _BodyWidgetState();
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
-  List<Recomendacion> recomendaciones = [];
+  late Future<List<Comida>> _comidasFuture;
+  
+  List<Comida> recomendaciones = [];
   List<Categoria> categorias = [];
-  Recomendacion? recomendacionSeleccionada;
+  Comida? recomendacionSeleccionada;
 
   @override
   void initState(){
     super.initState();
-    List<String> categoriasStrings = [];
-    switch (widget.comida) {
-      case Comidas.desayuno:
-        //idealmente se llamaria a una API, o se buscaría la informacion en una base de datos
-        categoriasStrings.addAll(["Ensalada", "Torta", "Panqueque", "Batido"]);
-        recomendaciones.addAll(
-          [
-            Recomendacion(
-              iconPath: "${Paths.foodIconsPath}honey-pancakes.svg",
-              nombre: "Panqueques de miel",
-              descripcion: "Facil | 20 mins | 180 kcal",
-              themeColor: Colores.color1,
-              strongThemeColor: Colores.strongColor1,
-            ),
-            Recomendacion(
-              iconPath: "${Paths.foodIconsPath}blueberry-pancake.svg",
-              nombre: "Panqueques de arándanos",
-              descripcion: "Facil | 20 mins | 220 kcal",
-              themeColor: Colores.color2,
-              strongThemeColor: Colores.strongColor2,
-            ),
-          ]
-        );
-
-        break;
-      default:
-    }
+    //ignora esta parte:
+    /*List<String> categoriasStrings = [];
 
     for (var i = 0; i < categoriasStrings.length; i++) {
       String categoria = categoriasStrings[i];
@@ -60,13 +37,19 @@ class _BodyWidgetState extends State<BodyWidget> {
           themeColor: i%2==0? Colores.color1 : Colores.color2
         )
       );
-    }
+    }*/
+    
 
-    
-    
+
+    _comidasFuture = _buscarYFiltrarComidas(widget.categoriaSeleccionada);
   }
 
-  void setRecomendacionSeleccionada(Recomendacion? recomendacionASeleccionar){
+  Future<List<Comida>> _buscarYFiltrarComidas(CategoriasComida categoriaComidaSeleccionada) async {
+    List<Comida> todasLasComidas = await obtenerComidas();
+    return todasLasComidas.where((comida) => comida.categoria == categoriaComidaSeleccionada.nombreEnJson).toList();
+  }
+
+  void setRecomendacionSeleccionada(Comida? recomendacionASeleccionar){
     setState(() {
       recomendacionSeleccionada = recomendacionASeleccionar;
       print("Seleccionar recomendacion: ${recomendacionSeleccionada?.nombre}");
@@ -98,9 +81,8 @@ class _BodyWidgetState extends State<BodyWidget> {
 
 
 
-  Container getSeccionRecomendaciones(List<Recomendacion> recomendaciones) {
+  Container getSeccionRecomendaciones(List<Comida> recomendaciones) {
     return Container(
-          // height: 150,
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
@@ -111,25 +93,7 @@ class _BodyWidgetState extends State<BodyWidget> {
               const SizedBox(
                 height: 15,
               ),
-              SeccionRecomendadosWidget(recomendaciones: recomendaciones, recomendacionSeleccionada: recomendacionSeleccionada, setRecomendacionSeleccionada: setRecomendacionSeleccionada,),
-              // Container(
-              //   height: 280,
-              //   padding: EdgeInsets.all(10),
-              //   decoration: BoxDecoration(
-              //     color: Colores.iconColor.withAlpha(20),
-              //     borderRadius: BorderRadius.circular(20),
-              //   ),
-              //   child: ListView.separated(
-              //     scrollDirection: Axis.horizontal,
-              //     // separatorBuilder: (context, index) => SizedBox(width: 20,),
-              //     separatorBuilder: (context, index) => SizedBox( width: 15, ),
-              //     itemCount: recomendaciones.length,
-              //     itemBuilder: (context, index) => Align(
-              //       alignment: Alignment.center,
-              //       child: RecomendacionWidget(recomendacion: recomendaciones[index], width: 200,),
-              //     ),
-              //   ),
-              // )
+              SeccionRecomendadosWidget(recomendaciones: recomendaciones, recomendacionSeleccionada: recomendacionSeleccionada, setRecomendacionSeleccionada: setRecomendacionSeleccionada, future: _comidasFuture),
             ],
           ),
         );

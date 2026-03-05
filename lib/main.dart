@@ -1,6 +1,4 @@
-import 'package:fitness_app/models/comidas.dart';
 import 'package:fitness_app/pages/home_page.dart';
-import 'package:fitness_app/pages/meal_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {

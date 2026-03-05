@@ -1,4 +1,4 @@
-import "package:fitness_app/models/comidas.dart";
+import 'package:fitness_app/util/utilities.dart';
 import "package:fitness_app/widgets/body_widget.dart";
 import "package:flutter/material.dart";
 import "package:flutter_svg/svg.dart";
@@ -6,18 +6,18 @@ import "package:flutter_svg/svg.dart";
 class MealPage extends StatelessWidget {
   const MealPage({super.key, required this.comida});
 
-  final Comidas comida;
+  final CategoriasComida comida;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colores.scaffoldBgColor,
       appBar: getBar(context, comida: comida),
-      body: BodyWidget(comida: comida),
+      body: BodyWidget(categoriaSeleccionada: comida),
     );
   }
 
-  AppBar getBar(BuildContext context, {required Comidas comida}){
+  AppBar getBar(BuildContext context, {required CategoriasComida comida}){
     
     return AppBar(
       backgroundColor: Colores.scaffoldBgColor,
@@ -93,5 +93,7 @@ class Estilos {
 
 class Paths {
   static const String iconsPath = "assets/icons/",
-                      foodIconsPath = "assets/icons/category/";
+                      foodIconsPath = "assets/icons/category/",
+                      foodImagesPath = "assets/images/comidas/",
+                      comidasDataPath = "assets/data/";
 }
