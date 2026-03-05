@@ -129,7 +129,7 @@ Widget _getTextButtonView({required Comida recomendacion, required bool isSelect
         borderRadius: BorderRadius.circular(20),
       ),
       alignment: Alignment.center,
-      child: Text("View",
+      child: Text("Ver",
         style: TextStyle(
           color: isSelected ? Colors.white : Color.alphaBlend(recomendacion.themeColor.withAlpha(130), Colors.black),
         )

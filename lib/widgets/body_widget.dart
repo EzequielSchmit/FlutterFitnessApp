@@ -2,6 +2,7 @@ import 'package:fitness_app/models/categoria.dart';
 import 'package:fitness_app/util/utilities.dart';
 import 'package:fitness_app/models/comida.dart';
 import 'package:fitness_app/widgets/categoria_widget.dart';
+import 'package:fitness_app/widgets/seccion_categorias_widget.dart';
 import 'package:fitness_app/widgets/seccion_recomendados_widget.dart';
 import 'package:flutter/material.dart';
 import "package:fitness_app/pages/meal_page.dart";
@@ -18,8 +19,6 @@ class BodyWidget extends StatefulWidget {
 class _BodyWidgetState extends State<BodyWidget> {
   late Future<List<Comida>> _comidasFuture;
   
-  List<Comida> recomendaciones = [];
-  List<Categoria> categorias = [];
   Comida? recomendacionSeleccionada;
 
   @override
@@ -49,6 +48,29 @@ class _BodyWidgetState extends State<BodyWidget> {
     return todasLasComidas.where((comida) => comida.categoria == categoriaComidaSeleccionada.nombreEnJson).toList();
   }
 
+  List<Categoria> _obtenerSubcategorias(List<Comida> comidas){
+    Set<String> categoriasSet = Set<String>();
+    for (Comida comida in comidas){
+      for (String subcategoria in comida.subcategorias){
+        categoriasSet.add(subcategoria);
+      }
+    }
+    List<String> categoriasStrings = categoriasSet.toList();
+    List<Categoria> categorias = [];
+    for (var i = 0; i < categoriasStrings.length; i++) {
+      String categoria = categoriasStrings[i];
+      categorias.add(
+        Categoria(
+          nombre: categoria,
+          iconPath: "${Paths.foodIconsPath}${categoria.toLowerCase()}.svg",
+          themeColor: i%2==0? Colores.color1 : Colores.color2
+        )
+      );
+    }
+
+    return categorias;
+  }
+
   void setRecomendacionSeleccionada(Comida? recomendacionASeleccionar){
     setState(() {
       recomendacionSeleccionada = recomendacionASeleccionar;
@@ -66,9 +88,34 @@ class _BodyWidgetState extends State<BodyWidget> {
         children: [
           getSearchField(),
           const SizedBox(height: 50,),
-          getSeccionCategoria(categorias,),
-          const SizedBox(height: 50,),
-          getSeccionRecomendaciones(recomendaciones),
+          FutureBuilder(
+            future: _comidasFuture,
+            builder: (context, snapshot) {
+              
+              if (snapshot.connectionState == ConnectionState.waiting){
+                return const Center( child: CircularProgressIndicator(),);
+              }
+
+              if (snapshot.hasError) {
+                return const Center(child: Text("Error al obtener datos.)", textAlign: TextAlign.center,));
+              }
+
+              if (!snapshot.hasData || snapshot.data!.isEmpty){
+                return const Center(child: Text("No hay datos para la comida del dia elegida.)", textAlign: TextAlign.center,));
+              }
+
+              List<Comida> recomendaciones = snapshot.data!;
+              List<Categoria> categorias = _obtenerSubcategorias(recomendaciones);
+
+              return Column(
+                children: [
+                  getSeccionCategoria(categorias,),
+                  const SizedBox(height: 50,),
+                  getSeccionRecomendaciones(recomendaciones),
+                ],
+              );
+            },
+          )
         ],
       ),
     );
@@ -113,32 +160,7 @@ class _BodyWidgetState extends State<BodyWidget> {
               const SizedBox(
                 height: 15,
               ),
-              Container(
-                height: 130,
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colores.iconColor.withAlpha(20),
-                  borderRadius: BorderRadius.circular(20),
-                  // border: BoxBorder.all(
-                  //   color: iconColor,
-                  //   width: 0.3,
-                  // )
-                ),
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: categorias.length,
-                  separatorBuilder: (context, index) => SizedBox(
-                    width: 20,
-                  ),
-                  itemBuilder: (context, index) =>Align(
-                    alignment: Alignment.center,
-                    child: CategoriaWidget(
-                      categoria: categorias[index],
-                      width: 95,
-                    ),
-                  ),
-                ),
-              )
+              SeccionCategoriasWidget(categorias: categorias,),
             ],
           ),
         );

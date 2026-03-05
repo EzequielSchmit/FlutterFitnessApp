@@ -44,7 +44,7 @@ class CategoriaWidget extends StatelessWidget {
             padding: EdgeInsets.all(15),
             child: SvgPicture.asset(categoria.iconPath)
           ),
-          Text(categoria.nombre),
+          Text(categoria.nombre, textAlign: TextAlign.center,),
         ],
       ),
     );
