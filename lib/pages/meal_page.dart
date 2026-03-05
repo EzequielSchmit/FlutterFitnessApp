@@ -2,26 +2,35 @@ import 'package:fitness_app/util/utilities.dart';
 import "package:fitness_app/widgets/body_widget.dart";
 import "package:flutter/material.dart";
 import "package:flutter_svg/svg.dart";
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-class MealPage extends StatelessWidget {
+class MealPage extends StatefulWidget {
   const MealPage({super.key, required this.comida});
 
-  final CategoriasComida comida;
+  final ComidasDelDia comida;
+
+  @override
+  State<MealPage> createState() => _MealPageState();
+}
+
+class _MealPageState extends State<MealPage> {
+
+  Color _colorDePrueba = Colors.blue;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colores.scaffoldBgColor,
-      appBar: getBar(context, comida: comida),
-      body: BodyWidget(categoriaSeleccionada: comida),
+      backgroundColor: Colores.colorBgScaffold,
+      appBar: getBar(context, comida: widget.comida),
+      body: BodyWidget(comidaDelDiaSeleccionada: widget.comida),
     );
   }
 
-  AppBar getBar(BuildContext context, {required CategoriasComida comida}){
+  AppBar getBar(BuildContext context, {required ComidasDelDia comida}){
     
     return AppBar(
-      backgroundColor: Colores.scaffoldBgColor,
-      surfaceTintColor: Colores.scaffoldBgColor,
+      backgroundColor: Colores.colorAppBar,
+      surfaceTintColor: Colores.colorBgScaffold,
       animateColor: true,
 
       title:Text(comida.nombreFormateado,
@@ -40,6 +49,7 @@ class MealPage extends StatelessWidget {
       actions: [
         GestureDetector(
           onTap: (){
+            // _abrirSelectorDeColor();
           },
           child: MySvgButton("${Paths.iconsPath}dots.svg", 5, 5),
         ),
@@ -47,8 +57,41 @@ class MealPage extends StatelessWidget {
 
     );
   }
-
+  //Metodo para desarrollo (permite mostrar un selector de color en el dispositivo movil y ver los colores reales RGB)
+  void _abrirSelectorDeColor() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('picker'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: _colorDePrueba,
+              onColorChanged: (Color nuevoColor) {
+                setState(() {
+                  _colorDePrueba = nuevoColor;
+                });
+                String hexCode = nuevoColor.value.toRadixString(16).toUpperCase();
+                print('COLOR: 0x$hexCode');
+              },
+              pickerAreaHeightPercent: 0.8,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Listo'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+
+
 
 class MySvgButton extends StatelessWidget {
   final String path;
@@ -72,28 +115,4 @@ class MySvgButton extends StatelessWidget {
       ),          
     );
   }
-}
-
-class Colores {
-  static const Color  color1 = Color.fromARGB(255, 255, 239, 239),
-                      strongColor1 = Color.fromARGB(255, 255, 209, 209),
-                      color2 = Color.fromARGB(255, 242, 248, 255),
-                      strongColor2 = Color.fromARGB(255, 203, 227, 255),
-                      scaffoldBgColor = Colors.white,
-                      iconColor = Colors.grey,
-                      inputColor = Colors.black;
-}
-
-class Estilos {
-  static const TextStyle  sectionTitleStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.w600,),
-                          titleStyle = TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold,),
-                          hintSearchInput = TextStyle(color: Colores.iconColor, fontSize: 14),
-                          searchInput = TextStyle(color: Colores.inputColor,);
-}
-
-class Paths {
-  static const String iconsPath = "assets/icons/",
-                      foodIconsPath = "assets/icons/category/",
-                      foodImagesPath = "assets/images/comidas/",
-                      comidasDataPath = "assets/data/";
 }

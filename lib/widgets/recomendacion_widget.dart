@@ -1,7 +1,6 @@
 import 'package:fitness_app/models/comida.dart';
-import 'package:fitness_app/pages/meal_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import "package:fitness_app/util/utilities.dart";
 
 class RecomendacionWidget extends StatelessWidget{
 
@@ -10,7 +9,7 @@ class RecomendacionWidget extends StatelessWidget{
   final double width, height;
   final Comida recomendacion;
   final bool isSelected;
-  final Function(Comida) setRecomendacionSeleccionado;
+  final Function(Comida?) setRecomendacionSeleccionado;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +19,7 @@ class RecomendacionWidget extends StatelessWidget{
     const double iconWidth = 120;
     return GestureDetector(
       onTap: (){
-        setRecomendacionSeleccionado(recomendacion);
+        setRecomendacionSeleccionado(isSelected? null : recomendacion);
         Scrollable.ensureVisible(
           context,
           alignment: 0,
@@ -33,10 +32,10 @@ class RecomendacionWidget extends StatelessWidget{
             height: height != 0? height : null,
             width: width != 0? width : null,
             decoration: BoxDecoration(
-              color: recomendacion.themeColor,
+              color: Colores.colorItems,
               borderRadius: BorderRadius.circular(15),
             ),
-            padding: EdgeInsets.symmetric(vertical: 15),
+            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -70,22 +69,15 @@ bool _isDarkColor(Color color){
 }
 
 Widget _getIconComidaRecomendada({required double iconWidth, required Comida recomendacion}){
-  print("path: ${Paths.foodImagesPath}${recomendacion.nombreIcono}");
-  return ClipRRect(
-    borderRadius: BorderRadiusGeometry.circular(20),
-    child: Image.asset("${Paths.foodImagesPath}${recomendacion.nombreIcono}",
-      width: double.infinity,
-      height: iconWidth,
-      fit: BoxFit.cover,
-    ),
-  );
-  
-  return SizedBox(
-    // margin: EdgeInsets.only(top: 10),
-    width: iconWidth,
-    height: iconWidth,
-    child: SvgPicture.asset(
-      recomendacion.nombreIcono,
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 10),
+    child: ClipRRect(
+      borderRadius: BorderRadiusGeometry.circular(20),
+      child: Image.asset("${Paths.foodImagesPath}${recomendacion.nombreIcono}",
+        width: double.infinity,
+        height: iconWidth,
+        fit: BoxFit.cover,
+      ),
     ),
   );
 }
@@ -102,7 +94,8 @@ Text _getTextNombreRecomendacion({required Comida recomendacion}) {
 }
 
 Widget _getTextDescripcion({required Comida recomendacion}){
-  String descripcion = "${recomendacion.dificultad} | ${recomendacion.tiempo}mins  | ${recomendacion.calorias}kcal";
+
+  String descripcion = "${recomendacion.dificultad} | ${recomendacion.tiempo == 0 ? "" : "${recomendacion.tiempo}mins  |"} ${recomendacion.calorias}kcal";
   return Text(
     descripcion,
     style: TextStyle(

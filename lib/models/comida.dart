@@ -13,6 +13,7 @@ class Comida {
   final String dificultad;
   final Color themeColor, strongThemeColor;
 
+  @override
   String toString(){
     return "Recomendacion: {nombre:'$nombre', descripcion:'$descripcion'}";
   }
@@ -22,7 +23,7 @@ class Comida {
   factory Comida.fromJson(Map<String,dynamic> json){
 
     List<Color> colors = [Colores.color1, Colores.color2];
-    List<Color> strongColors = [Colores.strongColor1, Colores.strongColor2];
+    List<Color> strongColors = [Colores.color1Strong, Colores.color2Strong];
     
     List<String> arreglarLista(dynamic valor){
       if (valor == null) return [];

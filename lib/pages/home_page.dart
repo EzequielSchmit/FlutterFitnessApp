@@ -12,11 +12,11 @@ class HomePage extends StatelessWidget {
         title: Text("Inicio", style: Estilos.titleStyle.copyWith(fontSize: 28,)),
         centerTitle: true,
         toolbarHeight: 80 ,
-        backgroundColor: Colors.blueAccent[100],
+        backgroundColor: Colores.colorAppBar,
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: Colors.blue[50],
+          color: Colores.colorBgScaffold,
         ),
         width: double.infinity,
         child: LayoutBuilder(
@@ -37,9 +37,9 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 50,),
-                    _getBotonDeComida(context, comida: CategoriasComida.desayuno),
-                    _getBotonDeComida(context, comida: CategoriasComida.comidaPrincipal),
-                    _getBotonDeComida(context, comida: CategoriasComida.snack),
+                    _getBotonDeComida(context, comida: ComidasDelDia.desayuno),
+                    _getBotonDeComida(context, comida: ComidasDelDia.comidaPrincipal),
+                    _getBotonDeComida(context, comida: ComidasDelDia.snack),
                   ],
                 ),
               ),
@@ -50,19 +50,19 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void abrirPaginaDeComida(BuildContext context, CategoriasComida comida){
+  void abrirPaginaDeComida(BuildContext context, ComidasDelDia comida){
     Navigator.push(
       context, 
       MaterialPageRoute(builder: (context) => MealPage(comida: comida),),
     );
   }
 
-  TextButton _getBotonDeComida(BuildContext context, {required CategoriasComida comida, bool estaHabilitado = true}){
+  TextButton _getBotonDeComida(BuildContext context, {required ComidasDelDia comida, bool estaHabilitado = true}){
     return TextButton(
       onPressed: estaHabilitado? ()=>abrirPaginaDeComida(context, comida) : null,
       child: Container(
         decoration: BoxDecoration(
-          color: estaHabilitado? Colors.blue[100] : Colors.grey[100],
+          color: estaHabilitado? Colores.colorBotonHabilitado : Colores.colorBotonDeshabilitado,
           borderRadius: BorderRadius.circular(30),
         ),
         padding: EdgeInsets.all(10),
@@ -71,7 +71,7 @@ class HomePage extends StatelessWidget {
         child: Text(
           comida.nombreFormateado,
           style: Estilos.sectionTitleStyle.copyWith(
-            color: estaHabilitado? Colors.blue[900] : Colors.grey,
+            color: estaHabilitado? Colores.colorTextoBotonHabilitado : Colores.colorTextoBotonDeshabilitado,
           ),
           textAlign: TextAlign.center,
         ),

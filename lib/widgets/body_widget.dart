@@ -1,16 +1,14 @@
-import 'package:fitness_app/models/categoria.dart';
+import 'package:fitness_app/models/subcategoria.dart';
 import 'package:fitness_app/util/utilities.dart';
 import 'package:fitness_app/models/comida.dart';
-import 'package:fitness_app/widgets/categoria_widget.dart';
-import 'package:fitness_app/widgets/seccion_categorias_widget.dart';
+import 'package:fitness_app/widgets/seccion_subcategorias_widget.dart';
 import 'package:fitness_app/widgets/seccion_recomendados_widget.dart';
 import 'package:flutter/material.dart';
-import "package:fitness_app/pages/meal_page.dart";
 import 'package:flutter_svg/svg.dart';
 
 class BodyWidget extends StatefulWidget {
-  const BodyWidget({super.key, required this.categoriaSeleccionada});
-  final CategoriasComida categoriaSeleccionada;
+  const BodyWidget({super.key, required this.comidaDelDiaSeleccionada});
+  final ComidasDelDia comidaDelDiaSeleccionada;
 
   @override
   State<BodyWidget> createState() => _BodyWidgetState();
@@ -20,61 +18,61 @@ class _BodyWidgetState extends State<BodyWidget> {
   late Future<List<Comida>> _comidasFuture;
   
   Comida? recomendacionSeleccionada;
+  Subcategoria? subcategoriaSeleccionada;
 
   @override
   void initState(){
     super.initState();
-    //ignora esta parte:
-    /*List<String> categoriasStrings = [];
-
-    for (var i = 0; i < categoriasStrings.length; i++) {
-      String categoria = categoriasStrings[i];
-      categorias.add(
-        Categoria(
-          nombre: categoria,
-          iconPath: "${Paths.foodIconsPath}${categoria.toLowerCase()}.svg",
-          themeColor: i%2==0? Colores.color1 : Colores.color2
-        )
-      );
-    }*/
-    
-
-
-    _comidasFuture = _buscarYFiltrarComidas(widget.categoriaSeleccionada);
+    _comidasFuture = _buscarYFiltrarComidasPorComidaDelDia(widget.comidaDelDiaSeleccionada);
   }
 
-  Future<List<Comida>> _buscarYFiltrarComidas(CategoriasComida categoriaComidaSeleccionada) async {
+  Future<List<Comida>> _buscarYFiltrarComidasPorComidaDelDia(ComidasDelDia comidaDelDiaSeleccionada) async {
     List<Comida> todasLasComidas = await obtenerComidas();
-    return todasLasComidas.where((comida) => comida.categoria == categoriaComidaSeleccionada.nombreEnJson).toList();
+    return todasLasComidas.where((comida) => comida.categoria == comidaDelDiaSeleccionada.nombreEnJson).toList();
   }
 
-  List<Categoria> _obtenerSubcategorias(List<Comida> comidas){
-    Set<String> categoriasSet = Set<String>();
+  List<Subcategoria> _obtenerSubcategorias(List<Comida> comidas){
+    Map<String,String> subcategoriasMap = {};
+
+    // Set<String> categoriasSet = {};
     for (Comida comida in comidas){
       for (String subcategoria in comida.subcategorias){
-        categoriasSet.add(subcategoria);
+        // categoriasSet.add(subcategoria);
+        subcategoriasMap[subcategoria] = comida.nombreIcono;
       }
     }
-    List<String> categoriasStrings = categoriasSet.toList();
-    List<Categoria> categorias = [];
-    for (var i = 0; i < categoriasStrings.length; i++) {
-      String categoria = categoriasStrings[i];
-      categorias.add(
-        Categoria(
-          nombre: categoria,
-          iconPath: "${Paths.foodIconsPath}${categoria.toLowerCase()}.svg",
-          themeColor: i%2==0? Colores.color1 : Colores.color2
+    List<Subcategoria> subcategorias = [];
+    Iterable<MapEntry<String,String>> entries = subcategoriasMap.entries;
+    int i = 0;
+    for (MapEntry<String,String> entry in entries){
+      String subcategoria = entry.key;
+      String imageName = entry.value;
+      subcategorias.add(
+        Subcategoria(
+          nombre: subcategoria,
+          iconPath: "${Paths.foodImagesPath}$imageName",
+          themeColor: i++%2==0? Colores.color1 : Colores.color2
         )
       );
     }
 
-    return categorias;
+    return subcategorias;
+  }
+
+  List<Comida> filtrarComidasPorSubcategorias(List<Comida> comidas, Subcategoria? subcategoria){
+    return subcategoria == null? comidas : comidas.where((comida) => comida.subcategorias.contains(subcategoria.nombre)).toList();
+  }
+
+  void setSubcategoriaSeleccionada(Subcategoria? subcategoriaASeleccionar) {
+    setState(() {
+      recomendacionSeleccionada = null;
+      subcategoriaSeleccionada = subcategoriaASeleccionar;
+    });
   }
 
   void setRecomendacionSeleccionada(Comida? recomendacionASeleccionar){
     setState(() {
       recomendacionSeleccionada = recomendacionASeleccionar;
-      print("Seleccionar recomendacion: ${recomendacionSeleccionada?.nombre}");
     });
   }
 
@@ -84,39 +82,42 @@ class _BodyWidgetState extends State<BodyWidget> {
       onTap: (){
         setRecomendacionSeleccionada(null);
       },
-      child: ListView(
-        children: [
-          getSearchField(),
-          const SizedBox(height: 50,),
-          FutureBuilder(
-            future: _comidasFuture,
-            builder: (context, snapshot) {
-              
-              if (snapshot.connectionState == ConnectionState.waiting){
-                return const Center( child: CircularProgressIndicator(),);
-              }
-
-              if (snapshot.hasError) {
-                return const Center(child: Text("Error al obtener datos.)", textAlign: TextAlign.center,));
-              }
-
-              if (!snapshot.hasData || snapshot.data!.isEmpty){
-                return const Center(child: Text("No hay datos para la comida del dia elegida.)", textAlign: TextAlign.center,));
-              }
-
-              List<Comida> recomendaciones = snapshot.data!;
-              List<Categoria> categorias = _obtenerSubcategorias(recomendaciones);
-
-              return Column(
-                children: [
-                  getSeccionCategoria(categorias,),
-                  const SizedBox(height: 50,),
-                  getSeccionRecomendaciones(recomendaciones),
-                ],
-              );
-            },
-          )
-        ],
+      child: Container(
+        color: Colores.colorBgScaffold,
+        child: ListView(
+          children: [
+            getSearchField(),
+            const SizedBox(height: 50,),
+            FutureBuilder(
+              future: _comidasFuture,
+              builder: (context, snapshot) {
+                
+                if (snapshot.connectionState == ConnectionState.waiting){
+                  return const Center( child: CircularProgressIndicator(),);
+                }
+        
+                if (snapshot.hasError) {
+                  return const Center(child: Text("Error al obtener datos.)", textAlign: TextAlign.center,));
+                }
+        
+                if (!snapshot.hasData || snapshot.data!.isEmpty){
+                  return const Center(child: Text("No hay datos para la comida del dia elegida.)", textAlign: TextAlign.center,));
+                }
+        
+                List<Comida> comidas = snapshot.data!;
+                List<Subcategoria> subcategorias = _obtenerSubcategorias(comidas);
+                List<Comida> recomendacionesSegunSubcategoriaSeleccionada = filtrarComidasPorSubcategorias(comidas, subcategoriaSeleccionada);
+                return Column(
+                  children: [
+                    getSeccionSubategoria(subcategorias,),
+                    const SizedBox(height: 50,),
+                    getSeccionRecomendaciones(recomendacionesSegunSubcategoriaSeleccionada),
+                  ],
+                );
+              },
+            )
+          ],
+        ),
       ),
     );
   }
@@ -146,28 +147,27 @@ class _BodyWidgetState extends State<BodyWidget> {
         );
   }
 
-  Container getSeccionCategoria(List<Categoria> categorias) {
+  Container getSeccionSubategoria(List<Subcategoria> categorias) {
     return Container(
           margin: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
               Container(
                 width: double.infinity,
-                // padding: EdgeInsets.only(left: 20),
                 alignment: Alignment.centerLeft,
                 child: Text("Categoría", style: Estilos.sectionTitleStyle),
               ),
               const SizedBox(
                 height: 15,
               ),
-              SeccionCategoriasWidget(categorias: categorias,),
+              SeccionSubcategoriasWidget(subcategorias: categorias, setSubcategoriaSeleccionada: setSubcategoriaSeleccionada, subcategoriaSeleccionada: subcategoriaSeleccionada,),
             ],
           ),
         );
   }
 
   Container getSearchField() {
-    const ColorFilter iconColorFilter = ColorFilter.mode(Colores.iconColor, BlendMode.srcIn);
+    ColorFilter iconColorFilter = ColorFilter.mode(Colores.colorIcon, BlendMode.srcIn);
     return Container(
           margin: EdgeInsets.only(top: 40, left: 20, right: 20),
           decoration: BoxDecoration(
@@ -204,7 +204,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     VerticalDivider(
-                      color: Colores.iconColor,
+                      color: Colores.colorIcon,
                       thickness: 0.3,
                       indent: 10,
                       endIndent: 10,
@@ -223,7 +223,7 @@ class _BodyWidgetState extends State<BodyWidget> {
               hintStyle: Estilos.hintSearchInput,
               
             ),
-            style: Estilos.searchInput,
+            style: Estilos.searchInputStyle,
 
             
           )
